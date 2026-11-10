@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, timezone
-
+import random
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -216,6 +216,283 @@ def show_regions(day, api_key):
         st.write(f"두 지역의 TOP 10에 함께 오른 영화 {len(common)}편")
 
 
+# ==========================================
+# 🎮 이스터에그: 미니 게임 20가지 구현
+# ==========================================
+def run_easter_egg_games():
+    st.markdown("---")
+    st.subheader("🕹️ 시크릿 이스터에그: 미니 게임 20선")
+    st.info("박스오피스 분석 중 쉬어가기 좋은 20가지 미니 게임 공간입니다!")
+
+    games = [
+        "1. 업다운 숫자 맞추기", "2. 가위바위보 게임", "3. 주사위 굴리기 대결", 
+        "4. 동전 던져 앞뒤 맞추기", "5. 간단 타자 연습(속담)", "6. 행운의 로또 번호 생성기",
+        "7. 틱택토(삼목) 게임", "8. 베스트 스코어 클릭커", "9. 이상형 월드컵 (간이)",
+        "10. 끝말잇기 봇", "11. 심리 룰렛 돌리기", "12. 오늘의 운세 뽑기",
+        "13. 초성 퀴즈 맞추기", "14. 가벼운 암산 퀴즈", "15. 야구 게임 (숫자 3개)",
+        "16. 묵찌빠 마스터", "17. 색깔 일치 맞추기", "18. 무작위 단어 조합기",
+        "19. 타이머 스톱워치 게임", "20. 행운의 복권 긁기"
+    ]
+    
+    selected_game = st.selectbox("플레이할 게임을 선택하세요", games)
+    st.markdown(f"### ▶️ {selected_game}")
+
+    # 1. 업다운 숫자 맞추기
+    if "1." in selected_game:
+        if "updown_target" not in st.session_state:
+            st.session_state.updown_target = random.randint(1, 100)
+            st.session_state.updown_tries = 0
+        guess = st.number_input("1부터 100 사이의 숫자를 입력하세요", 1, 100, 50)
+        if st.button("정답 확인"):
+            st.session_state.updown_tries += 1
+            if guess < st.session_state.updown_target:
+                st.warning("업! ⬆️ 더 큰 숫자입니다.")
+            elif guess > st.session_state.updown_target:
+                st.warning("다운! ⬇️ 더 작은 숫자입니다.")
+            else:
+                st.success(f"🎉 정답입니다! 총 {st.session_state.updown_tries}번 만에 맞췄습니다.")
+                if st.button("다시 하기"):
+                    st.session_state.updown_target = random.randint(1, 100)
+                    st.session_state.updown_tries = 0
+                    st.rerun()
+
+    # 2. 가위바위보 게임
+    elif "2." in selected_game:
+        user_choice = st.selectbox("선택하세요", ["가위", "바위", "보"])
+        if st.button("결과 보기"):
+            com_choice = random.choice(["가위", "바위", "보"])
+            st.write(f"컴퓨터의 선택: **{com_choice}**")
+            if user_choice == com_choice:
+                st.info("비겼습니다!")
+            elif (user_choice == "가위" and com_choice == "보") or \
+                 (user_choice == "바위" and com_choice == "가위") or \
+                 (user_choice == "보" and com_choice == "바위"):
+                st.success("🎉 당신의 승리입니다!")
+            else:
+                st.error("😢 컴퓨터가 이겼습니다.")
+
+    # 3. 주사위 굴리기 대결
+    elif "3." in selected_game:
+        if st.button("주사위 던지기!"):
+            user_dice = random.randint(1, 6)
+            com_dice = random.randint(1, 6)
+            st.write(f"내 주사위: 🎲 **{user_dice}** vs 컴퓨터 주사위: 🎲 **{com_dice}**")
+            if user_dice > com_dice:
+                st.success("🎉 승리했습니다!")
+            elif user_dice < com_dice:
+                st.error("😢 패배했습니다.")
+            else:
+                st.info("🤝 무승부입니다!")
+
+    # 4. 동전 던져 앞뒤 맞추기
+    elif "4." in selected_game:
+        choice = st.radio("어디에 걸겠습니까?", ["앞면", "뒷면"])
+        if st.button("동전 던지기"):
+            result = random.choice(["앞면", "뒷면"])
+            st.write(f"동전 결과: **{result}**")
+            if choice == result:
+                st.success("🎉 적중했습니다!")
+            else:
+                st.error("😢 틀렸습니다.")
+
+    # 5. 간단 타자 연습(속담)
+    elif "5." in selected_game:
+        proverbs = ["고생 끝에 낙이 온다", "원숭이도 나무에서 떨어진다", "시작이 반이다", "소로 잃고 외양간 고친다"]
+        target = random.choice(proverbs)
+        st.info(따라 치세요: f"**{target}**")
+        user_input = st.text_input("입력란")
+        if st.button("제출"):
+            if user_input == target:
+                st.success("✨ 완벽합니다! 정확히 입력하셨습니다.")
+            else:
+                st.error("❌ 오타가 있거나 내용이 다릅니다.")
+
+    # 6. 행운의 로또 번호 생성기
+    elif "6." in selected_game:
+        if st.button("로또 번호 추천 받기"):
+            nums = sorted(random.sample(range(1, 46), 6))
+            st.success(f"🍀 추천 로또 번호: {nums}")
+
+    # 7. 틱택토(삼목) 게임
+    elif "7." in selected_game:
+        st.write("간단 삼목(Tic-Tac-Toe) 상태창")
+        if "ttt_board" not in st.session_state:
+            st.session_state.ttt_board = [""] * 9
+        cols = st.columns(3)
+        for i in range(9):
+            with cols[i % 3]:
+                if st.button(st.session_state.ttt_board[i] if st.session_state.ttt_board[i] else f"칸 {i+1}", key=f"ttt_{i}"):
+                    if st.session_state.ttt_board[i] == "":
+                        st.session_state.ttt_board[i] = "X"
+                        # 컴퓨터 턴
+                        empty_indices = [idx for idx, val in enumerate(st.session_state.ttt_board) if val == ""]
+                        if empty_indices:
+                            com_idx = random.choice(empty_indices)
+                            st.session_state.ttt_board[com_idx] = "O"
+                        st.rerun()
+        if st.button("틱택토 초기화"):
+            st.session_state.ttt_board = [""] * 9
+            st.rerun()
+
+    # 8. 베스트 스코어 클릭커
+    elif "8." in selected_game:
+        if "click_count" not in st.session_state:
+            st.session_state.click_count = 0
+        if st.button("🚀 광클하기!"):
+            st.session_state.click_count += 1
+        st.metric("현재 클릭 횟수", f"{st.session_state.click_count}회")
+        if st.button("클릭 초기화"):
+            st.session_state.click_count = 0
+            st.rerun()
+
+    # 9. 이상형 월드컵 (간이)
+    elif "9." in selected_game:
+        movies_list = ["어벤져스", "겨울왕국", "범죄도시", "아바타", "기생충", "인터스텔라"]
+        if "worldcup_pool" not in st.session_state:
+            st.session_state.worldcup_pool = random.sample(movies_list, 4)
+            st.session_state.worldcup_round = 0
+        pool = st.session_state.worldcup_pool
+        if len(pool) >= 2:
+            st.write("🍿 다음 중 더 선호하는 영화를 고르세요!")
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button(pool[0], key="wc_1"):
+                    st.session_state.worldcup_pool.pop(1)
+                    st.rerun()
+            with col2:
+                if st.button(pool[1], key="wc_2"):
+                    st.session_state.worldcup_pool.pop(0)
+                    st.rerun()
+        else:
+            st.success(f"🏆 최종 우승 영화: **{pool[0]}**")
+            if st.button("다시 시작"):
+                del st.session_state.worldcup_pool
+                st.rerun()
+
+    # 10. 끝말잇기 봇
+    elif "10." in selected_game:
+        word = st.text_input("제시어를 입력하세요 (예: 영화)", "영화")
+        if st.button("끝말잇기 한 판"):
+            last_char = word[-1] if word else "화"
+            candidates = [last_char + "면", last_char + "동", last_char + "가", last_char + "랑"]
+            ans = random.choice(candidates)
+            st.write(f"봇의 답변: **{ans}** (당신의 차례입니다!)")
+
+    # 11. 심리 룰렛 돌리기
+    elif "11." in selected_game:
+        if st.button("룰렛 돌리기"):
+            result = random.choice(["대박 행운!", "노력은 배신하지 않는다", "오늘 하루 휴식 필수", "새로운 도전을 하세요"])
+            st.info(f"🎯 룰렛 결과: **{result}**")
+
+    # 12. 오늘의 운세 뽑기
+    elif "12." in selected_game:
+        if st.button("운세 확인"):
+            luck = random.choice(["최상 🌟🌟🌟🌟🌟", "보통 🌟🌟🌟", "주의 🌟"])
+            st.success(f"📜 오늘의 총운: {luck}")
+
+    # 13. 초성 퀴즈 맞추기
+    elif "13." in selected_game:
+        st.write("초성 퀴즈: **ㅂㅈㄷㅅ** (영화진흥위원회 관련 단어)")
+        ans = st.text_input("정답 입력")
+        if st.button("확인"):
+            if ans.replace(" ", "") == "박스오피스":
+                st.success("🎉 정답입니다!")
+            else:
+                st.error("❌ 오답입니다. (힌트: ㅂㅅㅇㅍㅅ)")
+
+    # 14. 가벼운 암산 퀴즈
+    elif "14." in selected_game:
+        if "math_q" not in st.session_state:
+            st.session_state.math_a = random.randint(10, 50)
+            st.session_state.math_b = random.randint(10, 50)
+        a, b = st.session_state.math_a, st.session_state.math_b
+        user_ans = st.number_input(f"{a} + {b} = ?", value=0)
+        if st.button("정답 제출"):
+            if user_ans == a + b:
+                st.success("🎉 정답입니다!")
+                st.session_state.math_a = random.randint(10, 50)
+                st.session_state.math_b = random.randint(10, 50)
+            else:
+                st.error("❌ 틀렸습니다. 다시 시도해보세요.")
+
+    # 15. 야구 게임 (숫자 3개)
+    elif "15." in selected_game:
+        if "base_target" not in st.session_state:
+            st.session_state.base_target = "".join(random.sample("123456789", 3))
+        user_guess = st.text_input("서로 다른 3자리 숫자를 입력하세요 (예: 123)", max_chars=3)
+        if st.button("판정 요청"):
+            target = st.session_state.base_target
+            if len(user_guess) != 3:
+                st.warning("3자리 숫자를 정확히 입력하세요.")
+            else:
+                strikes = sum(1 for i in range(3) if user_guess[i] == target[i])
+                balls = sum(1 for i in range(3) if user_guess[i] in target and user_guess[i] != target[i])
+                st.write(f"결과: **{strikes} 스트라이크 / {balls} 볼**")
+                if strikes == 3:
+                    st.success("🎉 홈런! 정답을 맞췄습니다!")
+                    del st.session_state.base_target
+
+    # 16. 묵찌빠 마스터
+    elif "16." in selected_game:
+        if st.button("묵찌빠 시작"):
+            p = random.choice(["묵", "찌", "빠"])
+            c = random.choice(["묵", "찌", "빠"])
+            st.write(f"플레이어: {p} vs 상대: {c}")
+            if p == c:
+                st.success("비겼습니다!")
+            else:
+                st.info("승패가 갈렸습니다!")
+
+    # 17. 색깔 일치 맞추기
+    elif "17." in selected_game:
+        color_map = {"빨강": "🔴", "파랑": "🔵", "초록": "🟢"}
+        c_name = random.choice(list(color_map.keys()))
+        st.write(f"제시된 색상의 이모지를 고르세요: **{c_name}**")
+        ans = st.selectbox("선택", ["🔴", "🔵", "🟢"])
+        if st.button("색상 확인"):
+            if color_map[c_name] == ans:
+                st.success("✨ 맞췄습니다!")
+            else:
+                st.error("❌ 틀렸습니다.")
+
+    # 18. 무작위 단어 조합기
+    elif "18." in selected_game:
+        if st.button("단어 조합 생성"):
+            w1 = random.choice(["시원한", "빛나는", "즐거운", "용감한"])
+            w2 = random.choice(["영화관", "관객", "배우", "감독"])
+            st.success(f"조합 결과: {w1} {w2}")
+
+    # 19. 타이머 스톱워치 게임
+    elif "19." in selected_game:
+        st.write("5초에 가장 가까울 때 멈춰보세요!")
+        if "start_time" not in st.session_state:
+            st.session_state.start_time = None
+        if st.button("타이머 시작"):
+            st.session_state.start_time = datetime.now()
+            st.success("시작되었습니다! 마음속으로 5초를 세고 버튼을 누르세요.")
+        if st.button("타이머 멈춤") and st.session_state.start_time:
+            elapsed = (datetime.now() - st.session_state.start_time).total_seconds()
+            st.write(f"측정 시간: {elapsed:.2f}초")
+            diff = abs(5.0 - elapsed)
+            if diff < 0.2:
+                st.success("🏆 완벽합니다! 5초의 달인!")
+            else:
+                st.info(f"오차: {diff:.2f}초")
+
+    # 20. 행운의 복권 긁기
+    elif "20." in selected_game:
+        if st.button("복권 긁기"):
+            win = random.choice([True, False, False])
+            if win:
+                st.balloons()
+                st.success("🎉 당첨! 1등에 당첨되셨습니다!")
+            else:
+                st.error("😢 꽝 다음 기회에...")
+
+
+# ==========================================
+# 메인 실행부
+# ==========================================
 st.title("🎬 KOBIS 박스오피스 분석")
 st.caption("데이터 출처 · 영화진흥위원회 영화관입장권통합전산망(KOBIS) 오픈API")
 
@@ -249,3 +526,6 @@ try:
             show_movies(nationwide)
 except KobisError as error:
     st.error(str(error))
+
+# 이스터에그 게임 섹션 실행
+run_easter_egg_games()
